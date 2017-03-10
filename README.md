@@ -1,0 +1,2 @@
+# ApiPinger
+pings an api
