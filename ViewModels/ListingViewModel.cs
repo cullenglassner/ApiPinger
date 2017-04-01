@@ -11,11 +11,10 @@ namespace ApiPinger.ViewModels
     {
         [Required]
         [StringLength(100, MinimumLength = 4)]
-        public string Address_Line1 { get; set; }
+        public string Street_Address { get; set; }
         [Required]
-        public string Address_Line2 { get; set; }
+        public string City_State { get; set; }
         [Required]
-        public string Address_Line3 { get; set; }
-        public double Price { get; set; }
+        public string Zipcode { get; set; }
     }
 }
