@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using ApiPinger.ViewModels;
 
-namespace WebApplication.Controllers
+namespace ApiPinger.Controllers
 {
     public class HomeController : Controller
     {
@@ -23,19 +23,24 @@ namespace WebApplication.Controllers
             return View();
         }
 
-        
-        public IActionResult Zillow(ListingViewModel view)
-        {
-            if(ModelState.IsValid)
-            {
-                string zillowQuery = "";
-                zillowQuery += view.Address_Line1;
-                // TODO: Format string and send API query
-                ViewBag.UserMessage(zillowQuery);
-                ModelState.Clear();
-                _logger.LogDebug($"Zillow: {zillowQuery}");
-            }
+        // public IActionResult Zillow(ListingViewModel view)
+        // {
+        //     if(ModelState.IsValid)
+        //     {
+        //         string zillowQuery = "";
+        //         zillowQuery += view.Address_Line1;
+        //         // TODO: Format string and send API query
+        //         ViewBag.UserMessage(zillowQuery);
+        //         ModelState.Clear();
+        //         _logger.LogDebug($"Zillow: {zillowQuery}");
+        //     }
             
+        //     _logger.LogDebug($"Returning View (Zillow)");
+        //     return View();
+        // }
+
+        public IActionResult Zillow()
+        {
             _logger.LogDebug($"Returning View (Zillow)");
             return View();
         }
