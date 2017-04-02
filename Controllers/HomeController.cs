@@ -24,43 +24,50 @@ namespace ApiPinger.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Zillow(ListingViewModel view)
+        public async Task<IActionResult> Zillow(ListingViewModel model)
         {
             if(ModelState.IsValid)
             {
-                string zillowQuery = "&address=";
-                zillowQuery += view.Street_Address;
+                string zillowQuery = "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=";
+                zillowQuery += "X1-ZWz19bi4i5houj_5cfwc";
+                zillowQuery += "&address=";
+                zillowQuery += model.Address.Replace(' ', '+');
                 zillowQuery += "&citystatezip=";
-                if(view.Zipcode.Any())
+                if(model.Zipcode.Any())
                 {
-                    zillowQuery += view.Zipcode;
+                    zillowQuery += model.Zipcode;
                 }
-                else if (view.City_State.Any())
+                else if (model.CityState.Any())
                 {
-                    string[] citystate = view.City_State.Split(',', ' ', '-');
+                    string[] citystate = model.CityState.Split(',', ' ', '-');
                     if(citystate.Length != 2) return View();
                     zillowQuery += citystate[0] + "+" + citystate[1];
                 }
 
-                HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(zillowQuery);
+                _logger.LogDebug($"Zillow Query String: {zillowQuery}");
 
-                ViewBag.UserMessage(response.Content);
-                _logger.LogDebug($"Response: {response.Content}");                
-                //ViewBag.UserMessage(zillowQuery);
-                //_logger.LogDebug($"Zillow: {zillowQuery}");
+                try{
+                    HttpClient client = new HttpClient();
+                    HttpResponseMessage response = await client.GetAsync(zillowQuery);
+                    response.EnsureSuccessStatusCode();
+                    HttpContent content = response.Content;
+                    string result = await content.ReadAsStringAsync();
+                    if(result != null)
+                    {
+                        _logger.LogDebug($"Response: {result}");
+                        ViewBag.MyString = result;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewBag.UserMessage(e.Message);
+                }
                 ModelState.Clear();
             }
             
             _logger.LogDebug($"Returning View (Zillow) @ {DateTime.Now}");
             return View();
         }
-
-        // public IActionResult Zillow()
-        // {
-        //     _logger.LogDebug($"Returning View (Zillow)");
-        //     return View();
-        // }
 
         public IActionResult About()
         {
