@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using ApiPinger.ViewModels;
 using System.Net.Http;
+using System.Xml;
+using System.IO;
 
 namespace ApiPinger.Controllers
 {
@@ -55,7 +57,40 @@ namespace ApiPinger.Controllers
                     if(result != null)
                     {
                         _logger.LogDebug($"Response: {result}");
-                        ViewBag.MyString = result;
+                        using (XmlReader reader = XmlReader.Create(new StringReader(result)))
+                        {
+                            _logger.LogDebug("Reader created");
+                            if (reader.ReadToDescendant("text") && reader.ReadElementContentAsString() != "Request successfully processed")
+                            {
+                                _logger.LogDebug("No results?");
+                                ViewBag.Response = $"Error, no results found.";
+                            }
+                            else
+                            {
+                                _logger.LogDebug("No error, parsing out details...");
+                                if(reader.ReadToFollowing("homedetails"))
+                                {
+                                    string deets = reader.ReadElementContentAsString();
+                                    _logger.LogDebug($"Details: {deets}");
+                                    ViewBag.Details = deets;
+                                }
+
+                                if (reader.ReadToFollowing("street"))
+                                {
+                                    ViewBag.Street = reader.ReadElementContentAsString();
+                                    _logger.LogDebug($"Street: {ViewBag.Street}");
+                                }
+
+                                if (reader.ReadToFollowing("amount"))
+                                {
+                                    ViewBag.Amount = reader.ReadElementContentAsString();
+                                    reader.MoveToFirstAttribute();
+                                    ViewBag.Currency = reader.Value;
+                                }
+                            }
+                            
+                        }
+                        ViewBag.Response = result;
                     }
                 }
                 catch (Exception e)
@@ -71,15 +106,11 @@ namespace ApiPinger.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
-
             return View();
         }
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
-
             return View();
         }
 

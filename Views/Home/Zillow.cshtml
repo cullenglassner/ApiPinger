@@ -3,7 +3,7 @@
     ViewData["Title"] = "Zillow";
 }
 
-<div class="container">
+<div class="row">
     <form method="post">
         <span asp-validation-summary="ModelOnly"></span>
         @if (ViewBag.UserMessage != null)
@@ -36,7 +36,13 @@
         </div>
     </form>
 </div>
-<div>
-    <h2>Response</h2>
-    <p>@ViewBag.MyString</p>
+<div class="row">
+    @if (ViewBag.Response != null)
+    {
+        <h2>Result</h2>
+        @if (ViewBag.Street != null) {<p>@ViewBag.Street</p>}
+        @if (ViewBag.City != null) {<p>@ViewBag.City</p>}
+        @if (ViewBag.Details != null) {<a href=@ViewBag.Details>Home Details</a>}
+        @if (ViewBag.Amount != null) {<p>Price: @ViewBag.Amount @ViewBag.Currency</p>}
+    }
 </div>
