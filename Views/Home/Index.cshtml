@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
 <div class="container">
@@ -16,4 +16,12 @@
             </div>
         </div>
     </form>
+
+    <div class="row">
+        @if (ViewBag.Response != null)
+        {
+            <h2>Response</h2>
+            <p>@ViewBag.Response</p>
+        }
+    </div>
 </div>
